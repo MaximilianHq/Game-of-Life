@@ -1,4 +1,3 @@
-
 %% Game of Life
 clear
 clc
@@ -7,17 +6,20 @@ close all
 enum_state = struct('dead',0,'alive',1);
 entity = struct('state',enum_state.alive);
 
+global GRIDHEIGHT;
+global GRIDWIDTH;
+global GRIDDEPTH;
 GRIDHEIGHT = 10;
-GRIDWIDTH = GRIDHEIGHT;
-GRIDDEPTH = GRIDHEIGHT;
+GRIDWIDTH = 10;
+GRIDDEPTH = 10;
 SIM_STEPS = 100;        % generation count
 FRAMERATE = 1;          % fps
-CELLSIZE = 500;          % px (45)
+CELLSIZE = 500;         % px
 CELLCOLOR = 'b';
 FIGURESIZE = 600;       % px
 
 cells = repmat(entity,[GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH]);
-cells = genRandomSeed(cells,GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH,enum_state);
+cells = genRandomSeed(cells,enum_state);
 
 for f = 1:SIM_STEPS
     binary_array = zeros(GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH);
@@ -28,7 +30,7 @@ for f = 1:SIM_STEPS
             for k = 1:GRIDDEPTH
                 % calculate next state
                 population = getNeighborsAlive( ... 
-                    i,j,k,cells,GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH);
+                    i,j,k,cells);
                 cells(i,j,k).state = applyGamelogic(...
                     i,j,k,cells,population,enum_state);
     
@@ -67,8 +69,10 @@ for f = 1:SIM_STEPS
 end
 
 function cells_random = genRandomSeed( ... % generate random cellmap
-    cells,GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH,enum_state)
+    cells,enum_state)
     
+    global GRIDHEIGHT; global GRIDWIDTH; global GRIDDEPTH;
+
     % loop through cells
     for i = 1:GRIDHEIGHT
         for j = 1:GRIDWIDTH
@@ -103,8 +107,10 @@ function next_state = applyGamelogic( ... % apply gamerules
 end
 
 function neighbors_alive = getNeighborsAlive( ... % count neighbors alive
-    i,j,k,cells,GRIDHEIGHT,GRIDWIDTH,GRIDDEPTH)
+    i,j,k,cells)
     
+    global GRIDHEIGHT; global GRIDWIDTH; global GRIDDEPTH;
+
     neighbors_alive = 0;
     
     for h = -1:1
